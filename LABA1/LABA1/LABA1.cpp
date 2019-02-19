@@ -17,8 +17,6 @@ TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 HINSTANCE g_hinst;
 HWND trackBar;
 
-CHOOSECOLOR cc; //Структура для выбора цвета через диалоговое окно
-
 COLORREF SQUARE_BORDER_COLOR=0x000000;//цвет контура эллипса
 double SQUARE_WIDTH = 10;
 double xPos;
@@ -124,17 +122,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-   COLORREF ccref[16];//custom colors
- 
-   memset(&cc,0,sizeof(cc));
-   cc.lStructSize=sizeof(CHOOSECOLOR);
-   cc.hwndOwner=hWnd;
-   cc.lpCustColors=ccref;
-   cc.rgbResult=SQUARE_BORDER_COLOR;
-   cc.Flags=CC_RGBINIT;
 
-   RegisterHotKey(hWnd, 0, MOD_ALT, 0x43);//зарегестрировал hotkey Alt+C как 0!!!!!!!!!!!!!
-   RegisterHotKey(hWnd, 1, MOD_CONTROL, 0x53);//зарегестрировал hotkey Ctrl+S как 1!!!!!!!!!!!!!
+   //RegisterHotKey(hWnd, 0, MOD_ALT, 0x43);//зарегестрировал hotkey Alt+C как 0!!!!!!!!!!!!!
+   //RegisterHotKey(hWnd, 1, MOD_CONTROL, 0x53);//зарегестрировал hotkey Ctrl+S как 1!!!!!!!!!!!!!
 
    if (!hWnd)
    {
@@ -150,52 +140,79 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_COMMAND	- process the application menu
 //  WM_DESTROY	- post a quit message and return
 
-HWND WINAPI CreateTrackbar( 
-    HWND hwndDlg,  // handle of dialog box (parent window) 
-    UINT iMin,     // minimum value in trackbar range 
-    UINT iMax,     // maximum value in trackbar range 
-    UINT iSelMin,  // minimum value in trackbar selection 
-    UINT iSelMax)  // maximum value in trackbar selection 
-{ 
+//HWND WINAPI CreateTrackbar( 
+//    HWND hwndDlg,  // handle of dialog box (parent window) 
+//    UINT iMin,     // minimum value in trackbar range 
+//    UINT iMax,     // maximum value in trackbar range 
+//    UINT iSelMin,  // minimum value in trackbar selection 
+//    UINT iSelMax)  // maximum value in trackbar selection 
+//{ 
+//
+//    InitCommonControls(); // loads common control's DLL 
+//
+//    HWND hwndTrack = CreateWindowEx( 
+//        WS_EX_TOOLWINDOW,                // no extended styles 
+//        TRACKBAR_CLASS,                  // class name 
+//        L"Choose square side length",    // title (caption) 
+//        WS_CHILD | 
+//        WS_VISIBLE |
+//		WS_OVERLAPPEDWINDOW|
+//        TBS_AUTOTICKS | 
+//        TBS_ENABLESELRANGE,              // style 
+//        10, 10,                          // position 
+//        200, 80,                        // size 
+//        hwndDlg,                         // parent window 
+//        NULL,                     // control identifier 
+//        g_hinst,                         // instance 
+//        NULL                             // no WM_CREATE parameter 
+//        ); 
+//
+//    SendMessage(hwndTrack, TBM_SETRANGE, 
+//        (WPARAM) TRUE,                   // redraw flag 
+//        (LPARAM) MAKELONG(iMin, iMax));  // min. & max. positions
+//        
+//    SendMessage(hwndTrack, TBM_SETPAGESIZE, 
+//        0, (LPARAM) 4);                  // new page size 
+//
+//    SendMessage(hwndTrack, TBM_SETSEL, 
+//        (WPARAM) FALSE,                  // redraw flag 
+//        (LPARAM) MAKELONG(iSelMin, iSelMax)); 
+//        
+//    SendMessage(hwndTrack, TBM_SETPOS, 
+//        (WPARAM) TRUE,                   // redraw flag 
+//        (LPARAM) iSelMin); 
+//
+//    SetFocus(hwndTrack); 
+//
+//    return hwndTrack; 
+//} 
 
-    InitCommonControls(); // loads common control's DLL 
+INT_PTR CALLBACK dlgSize(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	UNREFERENCED_PARAMETER(lParam);
+	switch (message)
+	{
+	case WM_INITDIALOG:
+		return (INT_PTR)TRUE;
 
-    HWND hwndTrack = CreateWindowEx( 
-        WS_EX_TOOLWINDOW,                // no extended styles 
-        TRACKBAR_CLASS,                  // class name 
-        L"Choose square side length",    // title (caption) 
-        WS_CHILD | 
-        WS_VISIBLE |
-		WS_OVERLAPPEDWINDOW|
-        TBS_AUTOTICKS | 
-        TBS_ENABLESELRANGE,              // style 
-        10, 10,                          // position 
-        200, 80,                        // size 
-        hwndDlg,                         // parent window 
-        NULL,                     // control identifier 
-        g_hinst,                         // instance 
-        NULL                             // no WM_CREATE parameter 
-        ); 
+	case WM_COMMAND:
+		WORD idButton = LOWORD(wParam);
+		switch (idButton)
+		{
+		case IDOK: {
+			// SQUARE_WIDTH = GetDlgItemInt(hDlg, , nullptr, FALSE);
+		}
+		case IDCANCEL: {
+			EndDialog(hDlg, LOWORD(wParam));
+			return (INT_PTR)TRUE;
+		}
+		}
+		break;
+	}
+	return (INT_PTR)FALSE;
+}
 
-    SendMessage(hwndTrack, TBM_SETRANGE, 
-        (WPARAM) TRUE,                   // redraw flag 
-        (LPARAM) MAKELONG(iMin, iMax));  // min. & max. positions
-        
-    SendMessage(hwndTrack, TBM_SETPAGESIZE, 
-        0, (LPARAM) 4);                  // new page size 
 
-    SendMessage(hwndTrack, TBM_SETSEL, 
-        (WPARAM) FALSE,                  // redraw flag 
-        (LPARAM) MAKELONG(iSelMin, iSelMax)); 
-        
-    SendMessage(hwndTrack, TBM_SETPOS, 
-        (WPARAM) TRUE,                   // redraw flag 
-        (LPARAM) iSelMin); 
-
-    SetFocus(hwndTrack); 
-
-    return hwndTrack; 
-} 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -205,24 +222,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	switch (message)
 	{
-	case WM_HSCROLL:{
-		SQUARE_WIDTH = SendMessage(trackBar, TBM_GETPOS, 0, 0);;
-		SQUARE_WIDTH*=30;
-		break;
-    }
-	case WM_HOTKEY:
-		switch(wParam)
-		{
-		case 0:
-			if(ChooseColor(&cc)){
-				SQUARE_BORDER_COLOR=cc.rgbResult;
-			}
-			break;
-		case 1:
-			trackBar = CreateTrackbar(hWnd, 1, 10, 1, 10);
-			break;
-		}
-		break;
+
 	case WM_GETMINMAXINFO:
 	{
 		MINMAXINFO* mmi = (MINMAXINFO*)lParam;
@@ -242,6 +242,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
 			break;
+		case IDM_SQUARESIZE:
+		    DialogBox(hInst, MAKEINTRESOURCE(IDD_SQUARESIZE), hWnd, dlgSize);
+			// MessageBox(hWnd, L"K", L"KK", MB_OK);
+			break;
+		case IDM_SQUARECOLOR: {
+			CHOOSECOLOR cc; //Структура для выбора цвета через диалоговое окно
+
+			memset(&cc, 0, sizeof(cc));
+
+			COLORREF ccref[16];//custom colors
+			cc.lStructSize = sizeof(CHOOSECOLOR);
+			cc.hwndOwner = hWnd;
+			cc.lpCustColors = ccref;
+			cc.rgbResult = SQUARE_BORDER_COLOR;
+			cc.Flags = CC_RGBINIT;
+
+			if (ChooseColor(&cc)) {
+				SQUARE_BORDER_COLOR = cc.rgbResult;
+			}
+			break;
+		}
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
@@ -274,7 +295,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	return 0;
 }
-
 // Message handler for about box.
 INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
