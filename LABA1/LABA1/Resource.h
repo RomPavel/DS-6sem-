@@ -12,7 +12,7 @@
 #define IDI_SMALL                       108
 #define IDC_LABA1                       109
 #define IDR_MAINFRAME                   128
-#define IDC_SLIDER1                     1001
+#define ID_SIZE_SLIDER                  1002
 #define ID_SIZE_SQUARESIZE              32771
 #define IDM_SQUARESIZE                  32772
 #define IDD_SQUARESIZE                  32772
@@ -27,8 +27,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        130
-#define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1002
+#define _APS_NEXT_COMMAND_VALUE         32781
+#define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif

@@ -2,10 +2,8 @@
 
 #include "stdafx.h"
 #include "LABA1.h"
-#include "WindowsX.h"
-#include "Commdlg.h"
-#include <commctrl.h>
-#pragma comment( lib, "comctl32.lib" )
+#include <vector>;
+using namespace std;
 
 #define MAX_LOADSTRING 100
 
@@ -19,9 +17,14 @@ HWND trackBar;
 
 COLORREF SQUARE_BORDER_COLOR=0x000000;//цвет контура эллипса
 double SQUARE_WIDTH = 10;
-double xPos;
-double yPos;
 
+struct SQUARE {
+	double x;
+	double y;
+	double size;
+	COLORREF color;
+};
+vector<SQUARE> squares;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -122,10 +125,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
 
-
-   //RegisterHotKey(hWnd, 0, MOD_ALT, 0x43);//зарегестрировал hotkey Alt+C как 0!!!!!!!!!!!!!
-   //RegisterHotKey(hWnd, 1, MOD_CONTROL, 0x53);//зарегестрировал hotkey Ctrl+S как 1!!!!!!!!!!!!!
-
    if (!hWnd)
    {
       return FALSE;
@@ -137,55 +136,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
-//  WM_COMMAND	- process the application menu
-//  WM_DESTROY	- post a quit message and return
 
-//HWND WINAPI CreateTrackbar( 
-//    HWND hwndDlg,  // handle of dialog box (parent window) 
-//    UINT iMin,     // minimum value in trackbar range 
-//    UINT iMax,     // maximum value in trackbar range 
-//    UINT iSelMin,  // minimum value in trackbar selection 
-//    UINT iSelMax)  // maximum value in trackbar selection 
-//{ 
-//
-//    InitCommonControls(); // loads common control's DLL 
-//
-//    HWND hwndTrack = CreateWindowEx( 
-//        WS_EX_TOOLWINDOW,                // no extended styles 
-//        TRACKBAR_CLASS,                  // class name 
-//        L"Choose square side length",    // title (caption) 
-//        WS_CHILD | 
-//        WS_VISIBLE |
-//		WS_OVERLAPPEDWINDOW|
-//        TBS_AUTOTICKS | 
-//        TBS_ENABLESELRANGE,              // style 
-//        10, 10,                          // position 
-//        200, 80,                        // size 
-//        hwndDlg,                         // parent window 
-//        NULL,                     // control identifier 
-//        g_hinst,                         // instance 
-//        NULL                             // no WM_CREATE parameter 
-//        ); 
-//
-//    SendMessage(hwndTrack, TBM_SETRANGE, 
-//        (WPARAM) TRUE,                   // redraw flag 
-//        (LPARAM) MAKELONG(iMin, iMax));  // min. & max. positions
-//        
-//    SendMessage(hwndTrack, TBM_SETPAGESIZE, 
-//        0, (LPARAM) 4);                  // new page size 
-//
-//    SendMessage(hwndTrack, TBM_SETSEL, 
-//        (WPARAM) FALSE,                  // redraw flag 
-//        (LPARAM) MAKELONG(iSelMin, iSelMax)); 
-//        
-//    SendMessage(hwndTrack, TBM_SETPOS, 
-//        (WPARAM) TRUE,                   // redraw flag 
-//        (LPARAM) iSelMin); 
-//
-//    SetFocus(hwndTrack); 
-//
-//    return hwndTrack; 
-//} 
+// Контекстное меню (на правую кнопку мыши вызывать попап такой же, как и у меню через getMenu +3 так как смещение в окне вкладк )
+
 
 INT_PTR CALLBACK dlgSize(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -193,14 +146,16 @@ INT_PTR CALLBACK dlgSize(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	switch (message)
 	{
 	case WM_INITDIALOG:
+		SendDlgItemMessage(hDlg, ID_SIZE_SLIDER, TBM_SETPOS, TRUE, SQUARE_WIDTH);
 		return (INT_PTR)TRUE;
 
 	case WM_COMMAND:
 		WORD idButton = LOWORD(wParam);
+
 		switch (idButton)
 		{
 		case IDOK: {
-			// SQUARE_WIDTH = GetDlgItemInt(hDlg, , nullptr, FALSE);
+			SQUARE_WIDTH = SendDlgItemMessage(hDlg, ID_SIZE_SLIDER, TBM_GETPOS, 0, 0);
 		}
 		case IDCANCEL: {
 			EndDialog(hDlg, LOWORD(wParam));
@@ -268,23 +223,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_LBUTTONDOWN:{
-		xPos = GET_X_LPARAM(lParam); 
-		yPos = GET_Y_LPARAM(lParam); 
-		
+		SQUARE square;
+		square.x = GET_X_LPARAM(lParam);
+		square.y = GET_Y_LPARAM(lParam);
+		square.color = SQUARE_BORDER_COLOR;
+		square.size = SQUARE_WIDTH;
+
+		squares.push_back(square);
 		RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
 		break;
 	}
 	case WM_PAINT:{
-		if(xPos&&yPos){
-			hdc = BeginPaint(hWnd, &ps);
-			HPEN pen =  CreatePen(PS_SOLID,20,SQUARE_BORDER_COLOR);
+		hdc = BeginPaint(hWnd, &ps);
+		for(auto s : squares){
+			double x = s.x;
+			double y = s.y;
+			double size = s.size;
+			COLORREF color = s.color;
+
+			HPEN pen =  CreatePen(PS_SOLID, 20, color);
 			SelectObject(hdc, pen);
 
-			if(Rectangle(hdc,xPos-SQUARE_WIDTH/2.0,yPos-SQUARE_WIDTH/2.0,xPos+SQUARE_WIDTH/2.0,yPos+SQUARE_WIDTH/2.0)){
-				DeleteObject(pen);
-			}
-			EndPaint(hWnd, &ps);
+			Rectangle(hdc, x - size / 2.0, y - size / 2.0, x + size / 2.0, y + size / 2.0);
+			DeleteObject(pen);
 		}
+		EndPaint(hWnd, &ps);
         break;
 	}
 	case WM_DESTROY:
