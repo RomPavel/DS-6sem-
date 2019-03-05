@@ -1,6 +1,5 @@
 ﻿  LABA1.cpp
 c:\users\fpm.romashev\desktop\ds-6sem-\laba1\laba1\laba1.cpp(5): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
-c:\users\fpm.romashev\desktop\ds-6sem-\laba1\laba1\laba1.cpp(148): warning C4244: аргумент: преобразование "double" в "LPARAM", возможна потеря данных
-c:\users\fpm.romashev\desktop\ds-6sem-\laba1\laba1\laba1.cpp(237): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\fpm.romashev\desktop\ds-6sem-\laba1\laba1\laba1.cpp(246): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
+c:\users\fpm.romashev\desktop\ds-6sem-\laba1\laba1\laba1.cpp(149): warning C4244: аргумент: преобразование "double" в "LPARAM", возможна потеря данных
+c:\users\fpm.romashev\desktop\ds-6sem-\laba1\laba1\laba1.cpp(252): warning C4244: аргумент: преобразование "double" в "int", возможна потеря данных
   LABA1.vcxproj -> C:\Users\fpm.romashev\Desktop\DS-6sem-\LABA1\Debug\LABA1.exe

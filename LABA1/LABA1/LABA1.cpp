@@ -233,6 +233,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
 		break;
 	}
+	case WM_CONTEXTMENU: {
+		HMENU yourMenu = GetMenu(hWnd);
+		HMENU hMenu =  GetSubMenu(yourMenu,2);
+		TrackPopupMenu(hMenu, TPM_TOPALIGN| TPM_LEFTALIGN, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam),0,hWnd,NULL);
+	}
 	case WM_PAINT:{
 		hdc = BeginPaint(hWnd, &ps);
 		for(auto s : squares){
